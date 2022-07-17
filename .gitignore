@@ -2,4 +2,9 @@
 /helm/api-platform/charts/*
 !/helm/api-platform/charts/.gitignore
 /_info/
-/api/docker/
+/Makefile0
+/api/docker/caddy_data/
+/api/docker/caddy_config/
+/api/docker/db/data/
+/api/docker/php_socket/
+_deleted/

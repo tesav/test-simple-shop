@@ -116,6 +116,8 @@
       <excludeFolder url="file://$MODULE_DIR$/api/vendor/symfony/expression-language" />
       <excludeFolder url="file://$MODULE_DIR$/api/vendor/symfony/filesystem" />
       <excludeFolder url="file://$MODULE_DIR$/api/vendor/symfony/finder" />
+      <excludeFolder url="file://$MODULE_DIR$/api/vendor/webmozart/glob" />
+      <excludeFolder url="file://$MODULE_DIR$/api/vendor/evotodi/seed-bundle" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

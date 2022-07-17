@@ -1,0 +1,10 @@
+INSERT INTO shop.catalog (id, name) VALUES (1, 'Готовые блюда');
+INSERT INTO shop.catalog (id, name) VALUES (2, 'Мясо');
+INSERT INTO shop.catalog (id, name) VALUES (3, 'Овощи и фрукты');
+INSERT INTO shop.catalog (id, name) VALUES (4, 'Колбасная продукция и деликатесы');
+INSERT INTO shop.catalog (id, name) VALUES (5, 'Яйца');
+INSERT INTO shop.catalog (id, name) VALUES (6, 'Молоко и молочная продукция');
+INSERT INTO shop.catalog (id, name) VALUES (7, 'Сыры');
+INSERT INTO shop.catalog (id, name) VALUES (8, 'Рыба и морепродукты');
+INSERT INTO shop.catalog (id, name) VALUES (9, 'Полуфабрикаты');
+INSERT INTO shop.catalog (id, name) VALUES (10, 'Бакалея');
