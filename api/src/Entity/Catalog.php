@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CatalogRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(mercure: true)]
 #[ORM\Entity(repositoryClass: CatalogRepository::class)]
 class Catalog
 {
@@ -18,7 +20,7 @@ class Catalog
     #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
-    #[ORM\OneToMany(mappedBy: 'id_catalog', targetEntity: Goods::class)]
+    #[ORM\OneToMany(mappedBy: 'catalog', targetEntity: Goods::class)]
     private $goods;
 
     public function __construct()
@@ -55,7 +57,7 @@ class Catalog
     {
         if (!$this->goods->contains($good)) {
             $this->goods[] = $good;
-            $good->setIdCatalog($this);
+            $good->setCatalog($this);
         }
 
         return $this;
@@ -65,8 +67,8 @@ class Catalog
     {
         if ($this->goods->removeElement($good)) {
             // set the owning side to null (unless already changed)
-            if ($good->getIdCatalog() === $this) {
-                $good->setIdCatalog(null);
+            if ($good->getCatalog() === $this) {
+                $good->setCatalog(null);
             }
         }
 
