@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d36df8d15b1ad3709a5d34c93f0b5809",
+    "content-hash": "b5e17ba71fc425917db16fd36c50cc19",
     "packages": [
         {
             "name": "api-platform/core",
@@ -1600,6 +1600,63 @@
                 "source": "https://github.com/doctrine/sql-formatter/tree/1.1.2"
             },
             "time": "2021-11-05T11:11:14+00:00"
+        },
+        {
+            "name": "evotodi/seed-bundle",
+            "version": "6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/evotodi/seed-bundle.git",
+                "reference": "e23f45a8eeeaf389a837f918d24171eda2fc9e53"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/evotodi/seed-bundle/zipball/e23f45a8eeeaf389a837f918d24171eda2fc9e53",
+                "reference": "e23f45a8eeeaf389a837f918d24171eda2fc9e53",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/doctrine-bundle": "^2.0",
+                "doctrine/orm": "^2.0",
+                "php": "^8",
+                "symfony/console": "^6.0",
+                "symfony/doctrine-bridge": "^6.0",
+                "symfony/finder": "^6.0",
+                "symfony/framework-bundle": "^6.0",
+                "symfony/yaml": "^6.0",
+                "webmozart/glob": "^4.5"
+            },
+            "require-dev": {
+                "symfony/config": "^6.0",
+                "symfony/dependency-injection": "^6.0",
+                "symfony/phpunit-bridge": "^6.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Evotodi\\SeedBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "evotodi",
+                    "email": "evotodi@gmail.com"
+                },
+                {
+                    "name": "Soyuka",
+                    "email": "soyuka@gmail.com"
+                }
+            ],
+            "description": "Seeder for symfony 6",
+            "support": {
+                "issues": "https://github.com/evotodi/seed-bundle/issues",
+                "source": "https://github.com/evotodi/seed-bundle/tree/6.0"
+            },
+            "time": "2022-05-11T13:11:22+00:00"
         },
         {
             "name": "fig/link-util",
@@ -7368,6 +7425,55 @@
             "time": "2021-03-09T10:59:23+00:00"
         },
         {
+            "name": "webmozart/glob",
+            "version": "4.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webmozarts/glob.git",
+                "reference": "3c17f7dec3d9d0e87b575026011f2e75a56ed655"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webmozarts/glob/zipball/3c17f7dec3d9d0e87b575026011f2e75a56ed655",
+                "reference": "3c17f7dec3d9d0e87b575026011f2e75a56ed655",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3 || ^8.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5",
+                "symfony/filesystem": "^5.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webmozart\\Glob\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bernhard Schussek",
+                    "email": "bschussek@gmail.com"
+                }
+            ],
+            "description": "A PHP implementation of Ant's glob.",
+            "support": {
+                "issues": "https://github.com/webmozarts/glob/issues",
+                "source": "https://github.com/webmozarts/glob/tree/4.6.0"
+            },
+            "time": "2022-05-24T19:45:58+00:00"
+        },
+        {
             "name": "willdurand/negotiation",
             "version": "3.0.0",
             "source": {
@@ -8914,5 +9020,5 @@
         "ext-iconv": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
