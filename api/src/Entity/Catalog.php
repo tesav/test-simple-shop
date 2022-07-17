@@ -20,7 +20,7 @@ class Catalog
     #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
-    #[ORM\OneToMany(mappedBy: 'catalog', targetEntity: Goods::class)]
+   #[ORM\OneToMany(mappedBy: 'catalog', targetEntity: Goods::class)]
     private $goods;
 
     public function __construct()
