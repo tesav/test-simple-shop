@@ -9,7 +9,8 @@ services:
       - database
     restart: unless-stopped
     volumes:
-      - php_socket:/var/run/php
+#      - php_socket:/var/run/php
+      - ./api/docker/php_socket:/var/run/php
     healthcheck:
       interval: 10s
       timeout: 3s
@@ -45,9 +46,12 @@ services:
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeMe!}
     restart: unless-stopped
     volumes:
-      - php_socket:/var/run/php
-      - caddy_data:/data
-      - caddy_config:/config
+      #      - php_socket:/var/run/php
+      #      - caddy_data:/data
+      #      - caddy_config:/config
+      - ./api/docker/php_socket:/var/run/php
+      - ./api/docker/caddy_data:/data
+      - ./api/docker/caddy_config:/config
     ports:
       # HTTP
       - target: 80
@@ -70,9 +74,21 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-!ChangeMe!}
       - POSTGRES_USER=${POSTGRES_USER:-api-platform}
     volumes:
-      - db_data:/var/lib/postgresql/data:rw
+      # - db_data:/var/lib/postgresql/data:rw
       # you may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./api/docker/db/data:/var/lib/postgresql/data:rw
+      - ./api/docker/db/data:/var/lib/postgresql/data:rw
+      - ./api/docker/db/seeds:/docker-entrypoint-initdb.d
+
+  pgadmin:
+    #    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+    #      depends_on: database
+    ports:
+      - "${PGADMIN_PORT:-8000}:80"
 
 # Mercure is installed as a Caddy module, prevent the Flex recipe from installing another service
 ###> symfony/mercure-bundle ###
@@ -82,7 +98,7 @@ volumes:
   php_socket:
   caddy_data:
   caddy_config:
-###> doctrine/doctrine-bundle ###
+  ###> doctrine/doctrine-bundle ###
   db_data:
 ###< doctrine/doctrine-bundle ###
 ###> symfony/mercure-bundle ###
