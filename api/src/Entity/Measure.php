@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\MeasureRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(mercure: true)]
 #[ORM\Entity(repositoryClass: MeasureRepository::class)]
 class Measure
 {
@@ -18,7 +20,7 @@ class Measure
     #[ORM\Column(type: 'string', length: 64)]
     private $name;
 
-    #[ORM\OneToMany(mappedBy: 'id_measure', targetEntity: Goods::class)]
+    #[ORM\OneToMany(mappedBy: 'measure', targetEntity: Goods::class)]
     private $goods;
 
     public function __construct()
@@ -55,7 +57,7 @@ class Measure
     {
         if (!$this->goods->contains($good)) {
             $this->goods[] = $good;
-            $good->setIdMeasure($this);
+            $good->setMeasure($this);
         }
 
         return $this;
@@ -65,8 +67,8 @@ class Measure
     {
         if ($this->goods->removeElement($good)) {
             // set the owning side to null (unless already changed)
-            if ($good->getIdMeasure() === $this) {
-                $good->setIdMeasure(null);
+            if ($good->getMeasure() === $this) {
+                $good->setMeasure(null);
             }
         }
 

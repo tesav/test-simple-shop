@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\GoodsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(mercure: true)]
 #[ORM\Entity(repositoryClass: GoodsRepository::class)]
 class Goods
 {
@@ -55,7 +57,7 @@ class Goods
         return $this->measure;
     }
 
-    public function setIdMeasure(?Measure $measure): self
+    public function setMeasure(?Measure $measure): self
     {
         $this->measure = $measure;
 
