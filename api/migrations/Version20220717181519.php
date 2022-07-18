@@ -25,8 +25,10 @@ final class Version20220717181519 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_563B92DC5B19B37 ON goods (id_catalog)');
         $this->addSql('CREATE INDEX IDX_563B92D5E9AB055 ON goods (id_measure)');
         $this->addSql('CREATE TABLE measure (id BIGINT NOT NULL, name VARCHAR(64) NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('ALTER TABLE goods ADD CONSTRAINT FK_563B92DC5B19B37 FOREIGN KEY (id_catalog) REFERENCES catalog (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE goods ADD CONSTRAINT FK_563B92D5E9AB055 FOREIGN KEY (id_measure) REFERENCES measure (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+//        $this->addSql('ALTER TABLE goods ADD CONSTRAINT FK_563B92DC5B19B37 FOREIGN KEY (id_catalog) REFERENCES catalog (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+//        $this->addSql('ALTER TABLE goods ADD CONSTRAINT FK_563B92D5E9AB055 FOREIGN KEY (id_measure) REFERENCES measure (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE goods ADD CONSTRAINT FK_563B92DC5B19B37 FOREIGN KEY (id_catalog) REFERENCES catalog (id) ON DELETE SET NULL');
+        $this->addSql('ALTER TABLE goods ADD CONSTRAINT FK_563B92D5E9AB055 FOREIGN KEY (id_measure) REFERENCES measure (id) ON DELETE CASCADE');
     }
 
     public function down(Schema $schema): void
