@@ -16,14 +16,14 @@ class Goods
     private $id;
 
     #[ORM\ManyToOne(targetEntity: Catalog::class, inversedBy: 'goods')]
-    #[ORM\JoinColumn(name: 'id_catalog')]
+    #[ORM\JoinColumn(name: 'id_catalog', nullable: true)]
     private $catalog;
 
     #[ORM\ManyToOne(targetEntity: Measure::class, inversedBy: 'goods')]
-    #[ORM\JoinColumn(name: 'id_measure', nullable: false)]
+    #[ORM\JoinColumn(name: 'id_measure')]
     private $measure;
 
-    #[ORM\Column(type: 'smallint')]
+    #[ORM\Column(type: 'boolean')]
     private $hidden;
 
     #[ORM\Column(type: 'string', length: 255)]

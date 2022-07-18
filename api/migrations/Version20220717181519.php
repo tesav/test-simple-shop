@@ -21,7 +21,7 @@ final class Version20220717181519 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE catalog (id BIGSERIAL NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE TABLE goods (id BIGSERIAL NOT NULL, id_catalog BIGINT DEFAULT NULL, id_measure BIGINT NOT NULL, hidden SMALLINT NOT NULL, name VARCHAR(255) NOT NULL, quantity DOUBLE PRECISION NOT NULL, regprice DOUBLE PRECISION NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE goods (id BIGSERIAL NOT NULL, id_catalog BIGINT DEFAULT NULL, id_measure BIGINT NOT NULL, hidden BOOLEAN DEFAULT false, name VARCHAR(255) NOT NULL, quantity DOUBLE PRECISION NOT NULL, regprice DOUBLE PRECISION NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_563B92DC5B19B37 ON goods (id_catalog)');
         $this->addSql('CREATE INDEX IDX_563B92D5E9AB055 ON goods (id_measure)');
         $this->addSql('CREATE TABLE measure (id BIGSERIAL NOT NULL, name VARCHAR(64) NOT NULL, PRIMARY KEY(id))');

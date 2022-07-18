@@ -2,15 +2,22 @@
 
 namespace App\Seeds;
 
+use App\Service\DatabaseUtil;
 use Evotodi\SeedBundle\Command\Seed;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use App\Entity\Catalog;
 use Symfony\Component\Finder\Finder;
 
 class ShopSeed extends Seed
 {
+
+    private DatabaseUtil $databaseUtil;
+
+    public function __construct(DatabaseUtil $databaseUtil, string $name = null)
+    {
+        parent::__construct($name);
+        $this->databaseUtil = $databaseUtil;
+    }
 
     /**
      * Return the name of your seed
@@ -45,23 +52,33 @@ class ShopSeed extends Seed
          */
         $this->disableDoctrineLogging();
 
-        //
         $this->unload($input, $output);
 
-        $finder = new Finder();
-        $finder->files()->name('/g|e\.sql$/i')->in(__DIR__ . '/data/');
+        $finder = $this->getFinderSqlFiles();
 
         $this->manager->getConnection()->exec("SET session_replication_role = 'replica'");
 
         foreach ($finder as $file) {
             $sql = preg_replace('/^(insert\s+into\s+)[a-z]+\.(.+)/im', '\1\2', $file->getContents());
+
+            if (pathinfo($file, PATHINFO_FILENAME) === 'goods') {
+                $sql = $this->walkValues(function (&$value, $index) {
+                    if ($index === 3) {
+                        $value = $value ? 'true' : 'false';
+                    }
+                }, $sql);
+            }
+
             $this->manager->getConnection()->exec($sql);
         }
 
         $this->manager->getConnection()->exec("SET session_replication_role = 'origin'");
 
-//        $this->manager->flush();
-//        $this->manager->clear();
+        $filenames = $this->getFileNames($finder);
+
+        foreach ($filenames as $filename) {
+            $this->databaseUtil->fixSequence($filename);
+        }
 
         /**
          * Must return an exit code.
@@ -76,10 +93,8 @@ class ShopSeed extends Seed
     public function unload(InputInterface $input, OutputInterface $output): int
     {
         //Clear tables
-        $finder = new Finder();
-        $finder->files()->name('/\.sql$/i')->in(__DIR__ . '/data/');
-
-        $names = array_map(fn($file) => pathinfo($file, PATHINFO_FILENAME), array_keys(iterator_to_array($finder)));
+        $finder = $this->getFinderSqlFiles();
+        $names = $this->getFileNames($finder);
         $this->manager->getConnection()->exec(sprintf('TRUNCATE %s CASCADE', implode(', ', $names)));
 
         /**
@@ -87,5 +102,26 @@ class ShopSeed extends Seed
          * A value other than 0 or Command::SUCCESS is considered a failed seed load/unload.
          */
         return 0;
+    }
+
+    private function getFinderSqlFiles(): Finder
+    {
+        $finder = new Finder();
+        $finder->files()->name('/\.sql$/i')->in(__DIR__ . '/data/');
+        return $finder;
+    }
+
+    private function getFileNames(Finder $finder): array
+    {
+        return array_map(fn($file) => pathinfo($file, PATHINFO_FILENAME), array_keys(iterator_to_array($finder)));
+    }
+
+    private function walkValues(callable $callback, string $sql): string
+    {
+        return preg_replace_callback('/(?<=values)\s+\([^)]+\)/im', function ($m) use ($callback) {
+            $values = array_map('trim', explode(',', trim($m[0], ' ()')));
+            array_walk($values, $callback);
+            return sprintf(' (%s)', implode(', ', $values));
+        }, $sql);
     }
 }
