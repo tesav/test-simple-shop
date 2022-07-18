@@ -60,6 +60,9 @@ class ShopSeed extends Seed
 
         $this->manager->getConnection()->exec("SET session_replication_role = 'origin'");
 
+//        $this->manager->flush();
+//        $this->manager->clear();
+
         /**
          * Must return an exit code.
          * A value other than 0 or Command::SUCCESS is considered a failed seed load/unload.
