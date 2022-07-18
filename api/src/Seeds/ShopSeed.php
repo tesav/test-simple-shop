@@ -62,7 +62,7 @@ class ShopSeed extends Seed
             $sql = preg_replace('/^(insert\s+into\s+)[a-z]+\.(.+)/im', '\1\2', $file->getContents());
 
             if (pathinfo($file, PATHINFO_FILENAME) === 'goods') {
-                $sql = $this->walkValues(function (&$value, $index) {
+                $sql = $this->databaseUtil->walkValues(function (&$value, $index) {
                     if ($index === 3) {
                         $value = $value ? 'true' : 'false';
                     }
@@ -114,14 +114,5 @@ class ShopSeed extends Seed
     private function getFileNames(Finder $finder): array
     {
         return array_map(fn($file) => pathinfo($file, PATHINFO_FILENAME), array_keys(iterator_to_array($finder)));
-    }
-
-    private function walkValues(callable $callback, string $sql): string
-    {
-        return preg_replace_callback('/(?<=values)\s+\([^)]+\)/im', function ($m) use ($callback) {
-            $values = array_map('trim', explode(',', trim($m[0], ' ()')));
-            array_walk($values, $callback);
-            return sprintf(' (%s)', implode(', ', $values));
-        }, $sql);
     }
 }

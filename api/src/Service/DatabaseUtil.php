@@ -13,6 +13,15 @@ class DatabaseUtil
         $this->managerRegistry = $managerRegistry;
     }
 
+    public function walkValues(callable $callback, string $sql): string
+    {
+        return preg_replace_callback('/(?<=values)\s+\([^)]+\)/im', function ($m) use ($callback) {
+            $values = array_map('trim', explode(',', trim($m[0], ' ()')));
+            array_walk($values, $callback);
+            return sprintf(' (%s)', implode(', ', $values));
+        }, $sql);
+    }
+
     public function fixSequence(string $table): void
     {
         $this->managerRegistry->getConnection()->exec(sprintf('
