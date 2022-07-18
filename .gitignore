@@ -8,3 +8,4 @@
 /api/docker/db/data/
 /api/docker/php_socket/
 _deleted/
+/.idea/
