@@ -6,14 +6,29 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class DatabaseUtil
 {
-    private ManagerRegistry $managerRegistry;
 
-    public function __construct(ManagerRegistry $managerRegistry)
+    public function __construct(
+        private ManagerRegistry $managerRegistry
+    )
     {
-        $this->managerRegistry = $managerRegistry;
     }
 
-    public function walkValues(callable $callback, string $sql): string
+    public function disableCheckForeignKey(): void
+    {
+        $this->setSessionReplicationRole('replica');
+    }
+
+    public function enableCheckForeignKey(): void
+    {
+        $this->setSessionReplicationRole('origin');
+    }
+
+    public function setSessionReplicationRole(string $role): void
+    {
+        $this->managerRegistry->getConnection()->exec(sprintf("SET session_replication_role = '%s'", $role));
+    }
+
+    public function walkSQLValues(callable $callback, string $sql): string
     {
         return preg_replace_callback('/(?<=values)\s+\([^)]+\)/im', function ($m) use ($callback) {
             $values = array_map('trim', explode(',', trim($m[0], ' ()')));
@@ -22,15 +37,21 @@ class DatabaseUtil
         }, $sql);
     }
 
-    public function fixSequence(string $table): void
+    public function fixSequence(string $tableName): void
     {
         $this->managerRegistry->getConnection()->exec(sprintf('
             BEGIN;
             -- protect against concurrent inserts while you update the counter
-            LOCK TABLE %1$s IN EXCLUSIVE MODE;
+            LOCK TABLE "%1$s" IN EXCLUSIVE MODE;
             -- Update the sequence
-            SELECT setval(\'%1$s_id_seq\', COALESCE((SELECT MAX(id)+1 FROM %1$s), 1), false);
+            SELECT setval(\'%1$s_id_seq\', COALESCE((SELECT MAX(id)+1 FROM "%1$s"), 1), false);
             COMMIT;
-        ', $table));
+        ', $tableName));
+    }
+
+    public function truncate(string $tableName): void
+    {
+        $this->managerRegistry->getConnection()->exec(sprintf('TRUNCATE "%s" CASCADE', $tableName));
+        $this->fixSequence($tableName);
     }
 }

@@ -35,6 +35,9 @@ final class Version20220717181519 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SCHEMA public');
+        $this->addSql('DROP SEQUENCE goods_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE catalog_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE measure_id_seq CASCADE');
         $this->addSql('ALTER TABLE goods DROP CONSTRAINT FK_563B92DC5B19B37');
         $this->addSql('ALTER TABLE goods DROP CONSTRAINT FK_563B92D5E9AB055');
         $this->addSql('DROP TABLE catalog');
