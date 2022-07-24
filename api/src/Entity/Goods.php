@@ -2,37 +2,54 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Symfony\Component\Serializer\Annotation\Groups;
 use App\Repository\GoodsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ApiResource(mercure: true)]
+#[ApiResource(
+    normalizationContext: ['groups' => ['goods']]
+)]
+#[ApiFilter(BooleanFilter::class, properties: ['hidden'])]
+#[ApiFilter(RangeFilter::class, properties: ['quantity'])]
+#[ApiFilter(SearchFilter::class, properties: ['catalog.id' => 'exact'])]
 #[ORM\Entity(repositoryClass: GoodsRepository::class)]
 class Goods
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'bigint')]
+    #[Groups("goods")]
     private $id;
 
     #[ORM\ManyToOne(targetEntity: Catalog::class, inversedBy: 'goods')]
-    #[ORM\JoinColumn(name: 'id_catalog')]
-    private $catalog;
+    #[ORM\JoinColumn(name: 'id_catalog', nullable: true)]
+    #[Groups("goods")]
+    private ?Catalog $catalog;
 
     #[ORM\ManyToOne(targetEntity: Measure::class, inversedBy: 'goods')]
-    #[ORM\JoinColumn(name: 'id_measure', nullable: false)]
-    private $measure;
+    #[ORM\JoinColumn(name: 'id_measure')]
+    #[Groups("goods")]
+    private Measure $measure;
 
-    #[ORM\Column(type: 'smallint')]
+    #[ORM\Column(type: 'boolean')]
+    #[Groups("goods")]
     private $hidden;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups("goods")]
     private $name;
 
     #[ORM\Column(type: 'float')]
+    #[Groups("goods")]
     private $quantity;
 
     #[ORM\Column(type: 'float')]
+    #[Groups("goods")]
     private $regprice;
 
     public function getId(): ?int
@@ -52,12 +69,12 @@ class Goods
         return $this;
     }
 
-    public function getMeasure(): ?Measure
+    public function getMeasure(): Measure
     {
         return $this->measure;
     }
 
-    public function setMeasure(?Measure $measure): self
+    public function setMeasure(Measure $measure): self
     {
         $this->measure = $measure;
 
@@ -71,7 +88,7 @@ class Goods
 
     public function setHidden(bool $hidden): self
     {
-        $this->hidden = (int)$hidden;
+        $this->hidden = $hidden;
 
         return $this;
     }
