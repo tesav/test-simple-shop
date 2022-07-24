@@ -6,28 +6,28 @@ import {
 } from "../../utils/dataAccess";
 
 export function error(error) {
-  return { type: "CATALOG_SHOW_ERROR", error };
+  return {type: "CATALOG_SHOW_ERROR", error};
 }
 
 export function loading(loading) {
-  return { type: "CATALOG_SHOW_LOADING", loading };
+  return {type: "CATALOG_SHOW_LOADING", loading};
 }
 
 export function success(retrieved) {
-  return { type: "CATALOG_SHOW_SUCCESS", retrieved };
+  return {type: "CATALOG_SHOW_SUCCESS", retrieved};
 }
 
 export function retrieve(id) {
   return (dispatch) => {
     dispatch(loading(true));
 
-    return fetch(id)
+    return fetch(`catalogs/${id}`)
       .then((response) =>
         response
           .json()
-          .then((retrieved) => ({ retrieved, hubURL: extractHubURL(response) }))
+          .then((retrieved) => ({retrieved, hubURL: extractHubURL(response)}))
       )
-      .then(({ retrieved, hubURL }) => {
+      .then(({retrieved, hubURL}) => {
         retrieved = normalize(retrieved);
 
         dispatch(loading(false));
@@ -46,7 +46,7 @@ export function reset(eventSource) {
   return (dispatch) => {
     if (eventSource) eventSource.close();
 
-    dispatch({ type: "CATALOG_SHOW_RESET" });
+    dispatch({type: "CATALOG_SHOW_RESET"});
     dispatch(error(null));
     dispatch(loading(false));
   };
@@ -63,16 +63,16 @@ export function mercureSubscribe(hubURL, topic) {
 }
 
 export function mercureOpen(eventSource) {
-  return { type: "CATALOG_SHOW_MERCURE_OPEN", eventSource };
+  return {type: "CATALOG_SHOW_MERCURE_OPEN", eventSource};
 }
 
 export function mercureMessage(retrieved) {
   return (dispatch) => {
     if (1 === Object.keys(retrieved).length) {
-      dispatch({ type: "CATALOG_SHOW_MERCURE_DELETED", retrieved });
+      dispatch({type: "CATALOG_SHOW_MERCURE_DELETED", retrieved});
       return;
     }
 
-    dispatch({ type: "CATALOG_SHOW_MERCURE_MESSAGE", retrieved });
+    dispatch({type: "CATALOG_SHOW_MERCURE_MESSAGE", retrieved});
   };
 }

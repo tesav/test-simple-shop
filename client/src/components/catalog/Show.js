@@ -1,9 +1,10 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { Link, Redirect } from "react-router-dom";
+import React, {Component} from "react";
+import {connect} from "react-redux";
+import {Link, Redirect} from "react-router-dom";
 import PropTypes from "prop-types";
-import { retrieve, reset } from "../../actions/catalog/show";
-import { del } from "../../actions/catalog/delete";
+import {retrieve, reset} from "../../actions/catalog/show";
+import {del} from "../../actions/catalog/delete";
+import Product from "../goods/Product";
 
 class Show extends Component {
   static propTypes = {
@@ -33,65 +34,36 @@ class Show extends Component {
   };
 
   render() {
-    if (this.props.deleted) return <Redirect to=".." />;
 
-    const item = this.props.retrieved;
+    if (this.props.loading) {
+      return (
+        <div className="alert alert-info">Loading...</div>
+      )
+    }
+
+    if (this.props.error) {
+      return (
+        <div className="alert alert-danger">{this.props.error}</div>
+      )
+    }
+
+    if (!this.props.retrieved) {
+      return <h3>No data found.</h3>
+    }
 
     return (
-      <div>
-        <h1>Show {item && item["@id"]}</h1>
+      <>
+        <div className="row gx-4 gx-lg-5 mb-5">
+          <h3 className={'center'}>{this.props.retrieved.name}</h3>
+        </div>
 
-        {this.props.loading && (
-          <div className="alert alert-info" role="status">
-            Loading...
-          </div>
-        )}
-        {this.props.error && (
-          <div className="alert alert-danger" role="alert">
-            <span className="fa fa-exclamation-triangle" aria-hidden="true" />{" "}
-            {this.props.error}
-          </div>
-        )}
-        {this.props.deleteError && (
-          <div className="alert alert-danger" role="alert">
-            <span className="fa fa-exclamation-triangle" aria-hidden="true" />{" "}
-            {this.props.deleteError}
-          </div>
-        )}
-
-        {item && (
-          <table className="table table-responsive table-striped table-hover">
-            <thead>
-              <tr>
-                <th>Field</th>
-                <th>Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">name</th>
-                <td>{item["name"]}</td>
-              </tr>
-              <tr>
-                <th scope="row">goods</th>
-                <td>{this.renderLinks("goods", item["goods"])}</td>
-              </tr>
-            </tbody>
-          </table>
-        )}
-        <Link to=".." className="btn btn-primary">
-          Back to list
-        </Link>
-        {item && (
-          <Link to={`/catalogs/edit/${encodeURIComponent(item["@id"])}`}>
-            <button className="btn btn-warning">Edit</button>
-          </Link>
-        )}
-        <button onClick={this.del} className="btn btn-danger">
-          Delete
-        </button>
-      </div>
-    );
+        <div className="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+          {this.props.retrieved && this.props.retrieved["goods"].map((item) => (
+            <Product key={item.id} item={item}/>
+          ))}
+        </div>
+      </>
+    )
   }
 
   renderLinks = (type, items) => {

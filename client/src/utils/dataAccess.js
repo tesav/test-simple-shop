@@ -3,6 +3,7 @@ import { SubmissionError } from "redux-form";
 import get from "lodash/get";
 import has from "lodash/has";
 import mapValues from "lodash/mapValues";
+import {value} from "lodash/seq";
 
 const MIME_TYPE = "application/ld+json";
 
@@ -66,7 +67,9 @@ export function normalize(data) {
   return mapValues(data, (value) =>
     Array.isArray(value)
       ? value.map((v) => get(v, "@id", v))
-      : get(value, "@id", value)
+      // FIXED: contradicts this: https://api-platform.com/docs/core/serialization/
+      // : get(value, "@id", value)
+      : value
   );
 }
 

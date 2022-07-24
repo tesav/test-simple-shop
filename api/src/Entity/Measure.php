@@ -3,12 +3,14 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use App\Repository\MeasureRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ApiResource(mercure: true)]
+//#[ApiResource(mercure: true)]
+#[ApiResource]
 #[ORM\Entity(repositoryClass: MeasureRepository::class)]
 class Measure
 {
@@ -18,6 +20,7 @@ class Measure
     private $id;
 
     #[ORM\Column(type: 'string', length: 64)]
+    #[Groups("goods")]
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'measure', targetEntity: Goods::class)]

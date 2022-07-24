@@ -1,8 +1,10 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import React, {Component} from "react";
+import {connect} from "react-redux";
+import {Link} from "react-router-dom";
 import PropTypes from "prop-types";
-import { list, reset } from "../../actions/goods/list";
+import {list, reset} from "../../actions/goods/list";
+import __ from "../../utils/i18n";
+import Product from "./Product";
 
 class List extends Component {
   static propTypes = {
@@ -18,7 +20,7 @@ class List extends Component {
   componentDidMount() {
     this.props.list(
       this.props.match.params.page &&
-        decodeURIComponent(this.props.match.params.page)
+      decodeURIComponent(this.props.match.params.page)
     );
   }
 
@@ -26,7 +28,7 @@ class List extends Component {
     if (this.props.match.params.page !== prevProps.match.params.page)
       this.props.list(
         this.props.match.params.page &&
-          decodeURIComponent(this.props.match.params.page)
+        decodeURIComponent(this.props.match.params.page)
       );
   }
 
@@ -35,76 +37,34 @@ class List extends Component {
   }
 
   render() {
+
+    if (this.props.loading) {
+      return (
+        <div className="alert alert-info">Loading...</div>
+      )
+    }
+
+    if (this.props.error) {
+      return (
+        <div className="alert alert-danger">{this.props.error}</div>
+      )
+    }
+
+    if (!this.props.retrieved) {
+      return <h3>No data found.</h3>
+    }
+
     return (
-      <div>
-        <h1>Goods List</h1>
-
-        {this.props.loading && (
-          <div className="alert alert-info">Loading...</div>
-        )}
-        {this.props.deletedItem && (
-          <div className="alert alert-success">
-            {this.props.deletedItem["@id"]} deleted.
-          </div>
-        )}
-        {this.props.error && (
-          <div className="alert alert-danger">{this.props.error}</div>
-        )}
-
-        <p>
-          <Link to="create" className="btn btn-primary">
-            Create
-          </Link>
-        </p>
-
-        <table className="table table-responsive table-striped table-hover">
-          <thead>
-            <tr>
-              <th>id</th>
-              <th>catalog</th>
-              <th>measure</th>
-              <th>hidden</th>
-              <th>name</th>
-              <th>quantity</th>
-              <th>regprice</th>
-              <th colSpan={2} />
-            </tr>
-          </thead>
-          <tbody>
-            {this.props.retrieved &&
-              this.props.retrieved["hydra:member"].map((item) => (
-                <tr key={item["@id"]}>
-                  <th scope="row">
-                    <Link to={`show/${encodeURIComponent(item["@id"])}`}>
-                      {item["@id"]}
-                    </Link>
-                  </th>
-                  <td>{this.renderLinks("catalogs", item["catalog"])}</td>
-                  <td>{this.renderLinks("measures", item["measure"])}</td>
-                  <td>{item["hidden"]}</td>
-                  <td>{item["name"]}</td>
-                  <td>{item["quantity"]}</td>
-                  <td>{item["regprice"]}</td>
-                  <td>
-                    <Link to={`show/${encodeURIComponent(item["@id"])}`}>
-                      <span className="fa fa-search" aria-hidden="true" />
-                      <span className="sr-only">Show</span>
-                    </Link>
-                  </td>
-                  <td>
-                    <Link to={`edit/${encodeURIComponent(item["@id"])}`}>
-                      <span className="fa fa-pencil" aria-hidden="true" />
-                      <span className="sr-only">Edit</span>
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
+      <>
+        <div className="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+          {this.props.retrieved["hydra:member"].map((item) => (
+            <Product key={item.id} item={item}/>
+          ))}
+        </div>
 
         {this.pagination()}
-      </div>
-    );
+      </>
+    )
   }
 
   pagination() {
@@ -164,9 +124,9 @@ class List extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const { retrieved, loading, error, eventSource, deletedItem } =
+  const {retrieved, loading, error, eventSource, deletedItem} =
     state.goods.list;
-  return { retrieved, loading, error, eventSource, deletedItem };
+  return {retrieved, loading, error, eventSource, deletedItem};
 };
 
 const mapDispatchToProps = (dispatch) => ({

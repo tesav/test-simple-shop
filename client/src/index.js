@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {Provider} from "react-redux";
-import { legacy_createStore as createStore, combineReducers, applyMiddleware } from 'redux';
+import {legacy_createStore as createStore, combineReducers, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
-import { reducer as form } from 'redux-form';
-import { createBrowserHistory } from 'history';
+import {reducer as form} from 'redux-form';
+import {createBrowserHistory} from 'history';
 import {
   ConnectedRouter,
   connectRouter,
@@ -14,6 +14,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import catalog from "./reducers/catalog";
+import goods from "./reducers/goods";
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.css';
 
@@ -24,18 +25,18 @@ const store = createStore(
     form,
     /* Add your reducers here */
     catalog,
+    goods,
   }),
   applyMiddleware(routerMiddleware(history), thunk)
 );
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <ConnectedRouter history={history}>
-        <App/>
-      </ConnectedRouter>
-    </Provider>
-  </React.StrictMode>
+  <Provider store={store}>
+    <ConnectedRouter history={history}>
+      <App/>
+    </ConnectedRouter>
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

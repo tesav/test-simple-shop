@@ -4,38 +4,30 @@ import {
   Switch,
   Route,
 } from "react-router-dom";
-import logo from './logo.svg';
 import './App.css';
-import {Create, List, Show, Update} from "./components/catalog";
+import {Show as CategoryGoodsList} from "./components/catalog";
+import {List as GoodsList, Show as ShowProduct} from "./components/goods";
+import Nav from './layouts/Nav'
+import Header from "./layouts/Header";
+import Section from "./layouts/Section";
+import Footer from "./layouts/Footer";
 
 function App() {
-  return (
-    <div className="App">
-      {/*<header className="App-header">*/}
-      {/*  <img src={logo} className="App-logo" alt="logo" />*/}
-      {/*  <p>*/}
-      {/*    Edit <code>src/App.js</code> and save to reload.*/}
-      {/*  </p>*/}
-      {/*  <a*/}
-      {/*    className="App-link"*/}
-      {/*    href="https://reactjs.org"*/}
-      {/*    target="_blank"*/}
-      {/*    rel="noopener noreferrer"*/}
-      {/*  >*/}
-      {/*    Learn React*/}
-      {/*  </a>*/}
-      {/*</header>*/}
 
-      <section>
-        <BrowserRouter>
-          <Switch>
-            <Route path="/" component={List} exact strict key="list" />
-            <Route render={() => <h1>Not Found</h1>} />
-          </Switch>
-        </BrowserRouter>
-      </section>
-    </div>
-  );
+  return (
+    <BrowserRouter>
+      <Nav/>
+      <Header/>
+      <Section>
+        <Switch>
+          <Route path="/" component={GoodsList} exact strict key="GoodsList"/>
+          <Route path="/category/:id" component={CategoryGoodsList} exact strict key="CategoryGoodsList"/>
+          <Route render={() => <h1>Not Found</h1>}/>
+        </Switch>
+      </Section>
+      <Footer/>
+    </BrowserRouter>
+  )
 }
 
 export default App;

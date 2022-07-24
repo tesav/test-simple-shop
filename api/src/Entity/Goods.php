@@ -3,36 +3,46 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use App\Repository\GoodsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ApiResource(mercure: true)]
+#[ApiResource(
+    normalizationContext: ['groups' => ['goods']]
+)]
 #[ORM\Entity(repositoryClass: GoodsRepository::class)]
 class Goods
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'bigint')]
+    #[Groups("goods")]
     private $id;
 
     #[ORM\ManyToOne(targetEntity: Catalog::class, inversedBy: 'goods')]
     #[ORM\JoinColumn(name: 'id_catalog', nullable: true)]
-    private $catalog;
+    #[Groups("goods")]
+    private ?Catalog $catalog;
 
     #[ORM\ManyToOne(targetEntity: Measure::class, inversedBy: 'goods')]
     #[ORM\JoinColumn(name: 'id_measure')]
-    private $measure;
+    #[Groups("goods")]
+    private Measure $measure;
 
     #[ORM\Column(type: 'boolean')]
+    #[Groups("goods")]
     private $hidden;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups("goods")]
     private $name;
 
     #[ORM\Column(type: 'float')]
+    #[Groups("goods")]
     private $quantity;
 
     #[ORM\Column(type: 'float')]
+    #[Groups("goods")]
     private $regprice;
 
     public function getId(): ?int
@@ -52,12 +62,12 @@ class Goods
         return $this;
     }
 
-    public function getMeasure(): ?Measure
+    public function getMeasure(): Measure
     {
         return $this->measure;
     }
 
-    public function setMeasure(?Measure $measure): self
+    public function setMeasure(Measure $measure): self
     {
         $this->measure = $measure;
 
