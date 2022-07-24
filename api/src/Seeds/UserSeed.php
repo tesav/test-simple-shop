@@ -6,14 +6,16 @@ use App\Service\DatabaseUtil;
 use Evotodi\SeedBundle\Command\Seed;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Finder\Finder;
+use App\Entity\User;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class ShopSeed extends Seed
+class UserSeed extends Seed
 {
 
     public function __construct(
-        private DatabaseUtil $databaseUtil,
-        string               $name = null
+        private UserPasswordHasherInterface $passwordHasher,
+        private DatabaseUtil                $databaseUtil,
+        string                              $name = null
     )
     {
         parent::__construct($name);
@@ -28,7 +30,7 @@ class ShopSeed extends Seed
          * The seed won't load if this is not set
          * The resulting command will be seed:user
          */
-        return 'catalog';
+        return 'user';
     }
 
     /**
@@ -38,7 +40,7 @@ class ShopSeed extends Seed
      */
     public static function getOrder(): int
     {
-        return 0;
+        return 1;
     }
 
     /**
@@ -53,31 +55,42 @@ class ShopSeed extends Seed
         $this->disableDoctrineLogging();
         $this->unload($input, $output);
 
-        $finder = $this->getFinderSqlFiles();
+        $password = 'Programmer1';
 
-        $this->databaseUtil->disableCheckForeignKey();
+        $users = [
+            [
+                'email' => 'admin@admin.com',
+                'password' => $password,
+                'roles' => ['ROLE_ADMIN'],
+            ],
+            [
+                'email' => 'user@user.com',
+                'password' => $password,
+                'roles' => ['ROLE_USER'],
+            ],
+            [
+                'email' => 'user1@user.com',
+                'password' => $password,
+                'roles' => ['ROLE_USER'],
+            ],
+            [
+                'email' => 'user2@user.com',
+                'password' => $password,
+                'roles' => ['ROLE_USER'],
+            ],
+        ];
 
-        foreach ($finder as $file) {
-            $sql = preg_replace('/^(insert\s+into\s+)[a-z]+\.(.+)/im', '\1\2', $file->getContents());
+        $entityManager = $this->manager->getManager();
 
-            if (pathinfo($file, PATHINFO_FILENAME) === 'goods') {
-                $sql = $this->databaseUtil->walkSQLValues(function (&$value, $index) {
-                    if ($index === 3) {
-                        $value = $value ? 'true' : 'false';
-                    }
-                }, $sql);
-            }
-
-            $this->manager->getConnection()->exec($sql);
+        foreach ($users as $user) {
+            $userRepo = new User();
+            $userRepo->setEmail($user['email']);
+            $userRepo->setRoles($user['roles']);
+            $userRepo->setPassword($this->passwordHasher->hashPassword($userRepo, $user['password']));
+            $entityManager->persist($userRepo);
         }
-
-        $this->databaseUtil->enableCheckForeignKey();
-
-        $filenames = $this->getFileNames($finder);
-
-        foreach ($filenames as $filename) {
-            $this->databaseUtil->fixSequence($filename);
-        }
+        $entityManager->flush();
+        $entityManager->clear();
 
         /**
          * Must return an exit code.
@@ -91,29 +104,13 @@ class ShopSeed extends Seed
      */
     public function unload(InputInterface $input, OutputInterface $output): int
     {
-        //Clear tables
-        $finder = $this->getFinderSqlFiles();
-        $names = $this->getFileNames($finder);
-        foreach ($names as $name) {
-            $this->databaseUtil->truncate($name);
-        }
+        //Clear the table
+        $this->databaseUtil->truncate('user');
 
         /**
          * Must return an exit code.
          * A value other than 0 or Command::SUCCESS is considered a failed seed load/unload.
          */
         return 0;
-    }
-
-    private function getFinderSqlFiles(): Finder
-    {
-        $finder = new Finder();
-        $finder->files()->name('/\.sql$/i')->in(__DIR__ . '/data/');
-        return $finder;
-    }
-
-    private function getFileNames(Finder $finder): array
-    {
-        return array_map(fn($file) => pathinfo($file, PATHINFO_FILENAME), array_keys(iterator_to_array($finder)));
     }
 }
