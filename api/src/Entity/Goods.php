@@ -2,7 +2,11 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Repository\GoodsRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,6 +14,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
     normalizationContext: ['groups' => ['goods']]
 )]
+#[ApiFilter(BooleanFilter::class, properties: ['hidden'])]
+#[ApiFilter(RangeFilter::class, properties: ['quantity'])]
+#[ApiFilter(SearchFilter::class, properties: ['catalog.id' => 'exact'])]
 #[ORM\Entity(repositoryClass: GoodsRepository::class)]
 class Goods
 {
@@ -81,7 +88,7 @@ class Goods
 
     public function setHidden(bool $hidden): self
     {
-        $this->hidden = (int)$hidden;
+        $this->hidden = $hidden;
 
         return $this;
     }

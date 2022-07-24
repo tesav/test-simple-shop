@@ -5,6 +5,8 @@ import PropTypes from "prop-types";
 import {list, reset} from "../../actions/goods/list";
 import __ from "../../utils/i18n";
 import Product from "./Product";
+import Pagination from "../Pagination";
+import {getQueryParam} from "../../utils/url";
 
 class List extends Component {
   static propTypes = {
@@ -18,22 +20,38 @@ class List extends Component {
   };
 
   componentDidMount() {
-    this.props.list(
-      this.props.match.params.page &&
-      decodeURIComponent(this.props.match.params.page)
-    );
+    this.load()
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.match.params.page !== prevProps.match.params.page)
-      this.props.list(
-        this.props.match.params.page &&
-        decodeURIComponent(this.props.match.params.page)
-      );
+    if (this.props.location.search !== prevProps.location.search)
+      this.load()
   }
 
   componentWillUnmount() {
     this.props.reset(this.props.eventSource);
+  }
+
+  load = () => {
+    const query = [
+      'hidden=false',
+      'quantity[gt]=0',
+    ]
+
+    if (this.props.location.search) {
+      const page = getQueryParam(this.props.location.search, 'page')
+      if (page) {
+        query.push(`page=${page}`)
+      }
+    }
+
+    if (this.props.match.params.id) {
+      query.push(`catalog.id=${this.props.match.params.id}`)
+    }
+
+    this.props.list(
+      `goods${query ? `?${query.join('&')}` : ''}`
+    );
   }
 
   render() {
@@ -62,65 +80,10 @@ class List extends Component {
           ))}
         </div>
 
-        {this.pagination()}
+        <Pagination retrieved={this.props.retrieved}/>
       </>
     )
   }
-
-  pagination() {
-    const view = this.props.retrieved && this.props.retrieved["hydra:view"];
-    if (!view || !view["hydra:first"]) return;
-
-    const {
-      "hydra:first": first,
-      "hydra:previous": previous,
-      "hydra:next": next,
-      "hydra:last": last,
-    } = view;
-
-    return (
-      <nav aria-label="Page navigation">
-        <Link
-          to="."
-          className={`btn btn-primary${previous ? "" : " disabled"}`}
-        >
-          <span aria-hidden="true">&lArr;</span> First
-        </Link>
-        <Link
-          to={
-            !previous || previous === first ? "." : encodeURIComponent(previous)
-          }
-          className={`btn btn-primary${previous ? "" : " disabled"}`}
-        >
-          <span aria-hidden="true">&larr;</span> Previous
-        </Link>
-        <Link
-          to={next ? encodeURIComponent(next) : "#"}
-          className={`btn btn-primary${next ? "" : " disabled"}`}
-        >
-          Next <span aria-hidden="true">&rarr;</span>
-        </Link>
-        <Link
-          to={last ? encodeURIComponent(last) : "#"}
-          className={`btn btn-primary${next ? "" : " disabled"}`}
-        >
-          Last <span aria-hidden="true">&rArr;</span>
-        </Link>
-      </nav>
-    );
-  }
-
-  renderLinks = (type, items) => {
-    if (Array.isArray(items)) {
-      return items.map((item, i) => (
-        <div key={i}>{this.renderLinks(type, item)}</div>
-      ));
-    }
-
-    return (
-      <Link to={`../${type}/show/${encodeURIComponent(items)}`}>{items}</Link>
-    );
-  };
 }
 
 const mapStateToProps = (state) => {

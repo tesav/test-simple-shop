@@ -5,7 +5,7 @@ import {
   Route,
 } from "react-router-dom";
 import './App.css';
-import {Show as CategoryGoodsList} from "./components/catalog";
+import {List as CatalogList} from "./components/catalog";
 import {List as GoodsList, Show as ShowProduct} from "./components/goods";
 import Nav from './layouts/Nav'
 import Header from "./layouts/Header";
@@ -21,7 +21,7 @@ function App() {
       <Section>
         <Switch>
           <Route path="/" component={GoodsList} exact strict key="GoodsList"/>
-          <Route path="/category/:id" component={CategoryGoodsList} exact strict key="CategoryGoodsList"/>
+          <Route path="/category/:id" component={GoodsList} strict key="CategoryGoodsList"/>
           <Route render={() => <h1>Not Found</h1>}/>
         </Switch>
       </Section>
