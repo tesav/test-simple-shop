@@ -25,4 +25,8 @@ $ yarn install
 $ yarn start
 </pre>
 
+### 
+
+При отркрытии: http://localhost:3000/, должно появиться [что-то вроде этого](https://i.imgur.com/XYpeiSP.png).
+
 
